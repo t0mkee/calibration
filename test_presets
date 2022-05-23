@@ -1,0 +1,23 @@
+preset 1:
+	test_name:Calibration     
+	scatter_read:1
+	test_type:0
+	tunnel_command:S01                      
+	min:0.196
+	max:0.204
+	samples:20
+	smartcell_pre_alarm_set_point:0.077
+	smartcell_alarm_set_point:0.095
+	utc_pre_alarm_set_point:0.108
+	utc_alarm_set_point:0.115
+preset 2:
+	test_name:Alarm test               
+	scatter_read:1
+	test_type:1
+	tunnel_command_smartcell:S21                      
+	tunnel_command_utc:S13
+	min_smartcell:0.103
+	max_smartcell:0.128
+	min_utc:0.124
+	max_utc:0.15
+	samples:30
