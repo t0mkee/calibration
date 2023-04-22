@@ -20,7 +20,7 @@ make sure to warn user if too many port opens
 //#define gettext(x) gettext(x).c_str()
 #define SENSORS 32
 #define BATCH_SIZE 30
-#define VERSION "1.1.2"
+#define VERSION "1.1.3"
 #define SOFTWARE_NAME "EMS Sensor Calibration"
 #define ASK_LOGIN TRUE // MAY CAUSE ISSUES LIKE TUNNEL PURGING IF FALSE
 
@@ -3239,7 +3239,7 @@ int setAlarmThreshold(sensorStruct* sensor, int* status, calibrationPresets pres
 
 
 	if (sensor->deviceType == 0) {
-		sensor->queue.push_back("ECW " + CheckSum);
+		sensor->queue.push_back("ECW" + CheckSum);
 
 
 	}
