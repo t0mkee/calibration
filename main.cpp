@@ -2798,7 +2798,27 @@ int setAlarmThreshold(sensorStruct* sensor, int* status, calibrationPresets pres
 		}
 
 		if (!sensor->Tests_Passed) {
-			LOG_F(2, "[%s] Sensor %d [%s] Previous test not passed, could not calibrate", sensor->serial.c_str(), SEN_ID, SEN_TRAY); //check notify
+			LOG_F(2, "[%s] Sensor %d [%s] Previous test not passed (Radiated), could not calibrate", sensor->serial.c_str(), SEN_ID, SEN_TRAY); //check notify
+			sensor->testPassed = "PREVIOUS TEST NOT PASSED";
+			sensor->completedTest = 1;
+			return 1;
+		}
+
+		snprintf(buffer, sizeof(buffer), "SELECT Assembled_Ident_Number, Tests_Passed FROM %s.Functional_Test_Stage\
+			WHERE Assembled_Ident_Number = '%s' ORDER BY datetime_of_test DESC LIMIT 1", database, sensor->Assembled_Ident_Number.c_str());
+		results = ExecuteSql(buffer, &sqlStatus);
+		if (sqlStatus == -1)
+			sqlFailed = true;
+		if (results.size() > 1) {
+			sensor->Tests_Passed = stoi(results[1]);
+		}
+		else {
+			LOG_F(2, "[%s] Sensor %d [%s] Could not fetch Functional_Test_Stage query", sensor->serial.c_str(), SEN_ID, SEN_TRAY);
+			sqlFailed = true;
+		}
+
+		if (!sensor->Tests_Passed) {
+			LOG_F(2, "[%s] Sensor %d [%s] Previous test not passed (Functional), could not calibrate", sensor->serial.c_str(), SEN_ID, SEN_TRAY); //check notify
 			sensor->testPassed = "PREVIOUS TEST NOT PASSED";
 			sensor->completedTest = 1;
 			return 1;
@@ -4530,7 +4550,27 @@ int alarmTest(sensorStruct* sensor, int* status, calibrationPresets preset, int 
 			}
 
 			if (!sensor->Tests_Passed) {
-				LOG_F(2, "[%s] Sensor %d [%s] Previous test not passed, could not calibrate", sensor->serial.c_str(), SEN_ID, SEN_TRAY); //check notify
+				LOG_F(2, "[%s] Sensor %d [%s] Previous test not passed (Radiated), could not calibrate", sensor->serial.c_str(), SEN_ID, SEN_TRAY); //check notify
+				sensor->testPassed = "PREVIOUS TEST NOT PASSED";
+				sensor->completedTest = 1;
+				return 1;
+			}
+
+			snprintf(buffer, sizeof(buffer), "SELECT Assembled_Ident_Number, Tests_Passed FROM %s.Functional_Test_Stage\
+			WHERE Assembled_Ident_Number = '%s' ORDER BY datetime_of_test DESC LIMIT 1", database.c_str(), sensor->Assembled_Ident_Number.c_str());
+			results = ExecuteSql(buffer, &sqlStatus);
+			if (sqlStatus == -1)
+				sqlFailed = true;
+			if (results.size() > 1) {
+				sensor->Tests_Passed = stoi(results[1]);
+			}
+			else {
+				LOG_F(2, "[%s] Sensor %d [%s] Could not fetch Functional_Test_Stage query", sensor->serial.c_str(), SEN_ID, SEN_TRAY);
+				sqlFailed = true;
+			}
+
+			if (!sensor->Tests_Passed) {
+				LOG_F(2, "[%s] Sensor %d [%s] Previous test not passed (Functional), could not calibrate", sensor->serial.c_str(), SEN_ID, SEN_TRAY); //check notify
 				sensor->testPassed = "PREVIOUS TEST NOT PASSED";
 				sensor->completedTest = 1;
 				return 1;
